@@ -14,7 +14,7 @@ RPI values and to compute the exposure risk.
 ```
 mkdir ~/gaen-wearable
 cd ~/gaen-wearable
-west init -m https://github.com/sendrato/gaen-wearable --mr master
+west init -m https://github.com/Sendrato/gaen-wearable.git --mr main
 west update
 ```
 3. Build & flash Zephyr test program (replace XX with target board)
