@@ -1,0 +1,26 @@
+manifest:
+  defaults:
+    remote: zephyr-git
+
+  remotes:
+    - name: zephyr-git
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      path: zephyr
+      west-commands: scripts/west-commands.yml
+      revision: zephyr-v2.4.0
+      remote: zephyr-git
+      import:
+        name-whitelist:
+          - cmsis
+          - hal_nordic
+          - nrf_hw_models
+          - segger
+          - tinycbor
+          - tinycrypt
+
+
+  self:
+    path: gaen-wearable
