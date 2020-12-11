@@ -36,10 +36,10 @@ LOG_MODULE_REGISTER(ui, LOG_LEVEL_INF);
  * property, or returns 0 if the property has no 'flags' cell.
  */
 
-#define FLAGS_OR_ZERO(node)						\
-	COND_CODE_1(DT_PHA_HAS_CELL(node, gpios, flags),		\
-		    (DT_GPIO_FLAGS(node, gpios)),			\
-		    (0))
+#define FLAGS_OR_ZERO(node)\
+    COND_CODE_1(DT_PHA_HAS_CELL(node, gpios, flags),\
+            (DT_GPIO_FLAGS(node, gpios)),\
+            (0))
 
 /*
  * Get button configuration from the devicetree sw0 alias.
@@ -47,21 +47,21 @@ LOG_MODULE_REGISTER(ui, LOG_LEVEL_INF);
  * At least a GPIO device and pin number must be provided. The 'flags'
  * cell is optional.
  */
-#define SW0_NODE	DT_ALIAS(sw0)
+#define SW0_NODE        DT_ALIAS(sw0)
 
 #if DT_NODE_HAS_STATUS(SW0_NODE, okay)
-#define SW0_GPIO_LABEL	DT_GPIO_LABEL(SW0_NODE, gpios)
-#define SW0_GPIO_PIN	DT_GPIO_PIN(SW0_NODE, gpios)
-#define SW0_GPIO_FLAGS	(GPIO_INPUT | FLAGS_OR_ZERO(SW0_NODE))
+#define SW0_GPIO_LABEL  DT_GPIO_LABEL(SW0_NODE, gpios)
+#define SW0_GPIO_PIN    DT_GPIO_PIN(SW0_NODE, gpios)
+#define SW0_GPIO_FLAGS  (GPIO_INPUT | FLAGS_OR_ZERO(SW0_NODE))
 #else
 #error "Unsupported board: sw0 devicetree alias is not defined"
-#define SW0_GPIO_LABEL	""
-#define SW0_GPIO_PIN	0
-#define SW0_GPIO_FLAGS	0
+#define SW0_GPIO_LABEL  ""
+#define SW0_GPIO_PIN    0
+#define SW0_GPIO_FLAGS  0
 #endif
 
-#define LED_NODE(x) DT_ALIAS(led##x)
-#define LED_PIN(x) DT_GPIO_PIN(LED_NODE(x), gpios)
+#define LED_NODE(x)  DT_ALIAS(led##x)
+#define LED_PIN(x)   DT_GPIO_PIN(LED_NODE(x), gpios)
 #define LED_FLAGS(x) FLAGS_OR_ZERO(LED_NODE(x))
 
 
@@ -133,17 +133,17 @@ const static struct device *_dev_haptic;
 static struct k_delayed_work _haptic_work;
 static uint8_t _haptic_state;
 
-#define HAPTIC_NODE	DT_INST(0, gpio_haptic)
+#define HAPTIC_NODE         DT_INST(0, gpio_haptic)
 
 #if DT_NODE_HAS_STATUS(HAPTIC_NODE, okay)
-#define HAPTIC_GPIO_LABEL	DT_GPIO_LABEL(HAPTIC_NODE, gpios)
-#define HAPTIC_GPIO_PIN	    DT_GPIO_PIN(HAPTIC_NODE, gpios)
-#define HAPTIC_GPIO_FLAGS	(GPIO_INPUT | FLAGS_OR_ZERO(HAPTIC_NODE))
+#define HAPTIC_GPIO_LABEL   DT_GPIO_LABEL(HAPTIC_NODE, gpios)
+#define HAPTIC_GPIO_PIN     DT_GPIO_PIN(HAPTIC_NODE, gpios)
+#define HAPTIC_GPIO_FLAGS   (GPIO_INPUT | FLAGS_OR_ZERO(HAPTIC_NODE))
 #else
 #warning "Haptic devicetree is not defined"
-#define HAPTIC_GPIO_LABEL	""
-#define HAPTIC_GPIO_PIN	0
-#define HAPTIC_GPIO_FLAGS	0
+#define HAPTIC_GPIO_LABEL   ""
+#define HAPTIC_GPIO_PIN     0
+#define HAPTIC_GPIO_FLAGS   0
 #endif
 
 
@@ -178,7 +178,7 @@ static void ui_btn_timeout(struct k_work *work)
 }
 
 static void ui_btn_state_changed(const struct device *dev,
-            struct gpio_callback *cb, unsigned int pins)
+                struct gpio_callback *cb, unsigned int pins)
 {
 
     int state = gpio_pin_get(_dev_btn, SW0_GPIO_PIN);
@@ -303,46 +303,46 @@ void ui_haptic_blink(uint8_t cnt)
 
 void ui_init(void)
 {
-	int ret;
+    int ret;
 
-	k_delayed_work_init(&_btn_work, ui_btn_timeout);
+    k_delayed_work_init(&_btn_work, ui_btn_timeout);
     k_delayed_work_init(&_led_work, ui_led_timeout);
     k_delayed_work_init(&_haptic_work, ui_haptic_timeout);
 
-	_dev_btn = device_get_binding(SW0_GPIO_LABEL);
-	if (_dev_btn == NULL) {
+    _dev_btn = device_get_binding(SW0_GPIO_LABEL);
+    if (_dev_btn == NULL) {
         LOG_ERR("Error: didn't find %s device", SW0_GPIO_LABEL);
-		return;
-	}
+        return;
+    }
 
-	ret = gpio_pin_configure(_dev_btn, SW0_GPIO_PIN, SW0_GPIO_FLAGS);
-	if (ret != 0) {
+    ret = gpio_pin_configure(_dev_btn, SW0_GPIO_PIN, SW0_GPIO_FLAGS);
+    if (ret != 0) {
         LOG_ERR("Error %d: failed to configure %s pin %d",
-		       ret, SW0_GPIO_LABEL, SW0_GPIO_PIN);
-		return;
-	}
+                        ret, SW0_GPIO_LABEL, SW0_GPIO_PIN);
+        return;
+    }
 
-	ret = gpio_pin_interrupt_configure(_dev_btn, SW0_GPIO_PIN,
+    ret = gpio_pin_interrupt_configure(_dev_btn, SW0_GPIO_PIN,
                     GPIO_INT_EDGE_BOTH);
-	if (ret != 0) {
+    if (ret != 0) {
         LOG_ERR("Error %d: failed to configure interrupt on %s pin %d",
-			ret, SW0_GPIO_LABEL, SW0_GPIO_PIN);
-		return;
-	}
+            ret, SW0_GPIO_LABEL, SW0_GPIO_PIN);
+        return;
+    }
 
-	gpio_init_callback(&_btn_gpio_cb, ui_btn_state_changed, BIT(SW0_GPIO_PIN));
-	gpio_add_callback(_dev_btn, &_btn_gpio_cb);
+    gpio_init_callback(&_btn_gpio_cb, ui_btn_state_changed, BIT(SW0_GPIO_PIN));
+    gpio_add_callback(_dev_btn, &_btn_gpio_cb);
     LOG_INF("Set up button at %s pin %d", SW0_GPIO_LABEL, SW0_GPIO_PIN);
 
-	_dev_led = device_get_binding("GPIO_0");
-	if (_dev_led == NULL) {
-		LOG_ERR("Error: didn't find 'GPIO_0' device");
-		return;
-	}
+    _dev_led = device_get_binding("GPIO_0");
+    if (_dev_led == NULL) {
+        LOG_ERR("Error: didn't find 'GPIO_0' device");
+        return;
+    }
 
     for(int i= 0; i < ARRAY_SIZE(_led_pins); i++) {
         ret = gpio_pin_configure(_dev_led, _led_pins[i],
-                    _led_flags[i] | GPIO_OUTPUT);
+                        _led_flags[i] | GPIO_OUTPUT);
         if (ret != 0) {
             LOG_ERR("Warning %d: failed to configure pin 'led%d'", ret, i);
         } else {
@@ -352,13 +352,13 @@ void ui_init(void)
     }
 
     _dev_haptic = device_get_binding(HAPTIC_GPIO_LABEL);
-	if (_dev_haptic == NULL) {
+    if (_dev_haptic == NULL) {
         LOG_ERR("Warning: didn't find haptic (%s) device", HAPTIC_GPIO_LABEL);
-	} else {
+    } else {
         ret = gpio_pin_configure(_dev_haptic, HAPTIC_GPIO_PIN, GPIO_OUTPUT);
         if (ret != 0) {
             LOG_ERR("Error %d: failed to configure haptic %d",
-                        ret, HAPTIC_GPIO_PIN);
+                            ret, HAPTIC_GPIO_PIN);
         }
         ui_haptic_off();
     }

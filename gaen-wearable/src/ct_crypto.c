@@ -92,10 +92,10 @@ static int ct_crypto_crng(uint8_t *tek)
 
     hwinfo_get_device_id((uint8_t*)hwid, sizeof(hwid));
 
-	dev = device_get_binding(DT_CHOSEN_ZEPHYR_ENTROPY_LABEL);
-	if (!dev) {
-		printk("error: no random device\n");
-	} else {
+    dev = device_get_binding(DT_CHOSEN_ZEPHYR_ENTROPY_LABEL);
+    if (!dev) {
+        printk("error: no random device\n");
+    } else {
         entropy_get_entropy(dev,seed, sizeof(seed));
     }
 
@@ -109,10 +109,10 @@ static int ct_crypto_crng(uint8_t *tek)
         add_random[i] = add_random[i] * add_random[i-1];
     }
 
-	(void)tc_hmac_prng_init(&h, hwid, sizeof(hwid));
-	(void)tc_hmac_prng_reseed(&h, seed, sizeof(seed), (uint8_t*)add_random,
-                        sizeof(add_random));
-    (void)tc_hmac_prng_generate(tek, TEK_SIZE, &h);
+    (void) tc_hmac_prng_init(&h, hwid, sizeof(hwid));
+    (void) tc_hmac_prng_reseed(&h, seed, sizeof(seed),
+                    (uint8_t*)add_random, sizeof(add_random));
+    (void) tc_hmac_prng_generate(tek, TEK_SIZE, &h);
 
     return 0;
 }
@@ -164,7 +164,7 @@ int ct_crypto_calc_rpik(uint8_t *tek, uint8_t *rpik)
 int ct_crypto_calc_rpi(uint32_t enin_j, uint8_t *rpik, uint8_t *rpi)
 {
     uint8_t padding[16];
-   	struct tc_aes_key_sched_struct s;
+    struct tc_aes_key_sched_struct s;
 
     for(int i=0;i<6;i++)
         padding[i] = psk_rpi[i];
@@ -183,8 +183,8 @@ int ct_crypto_calc_rpi(uint32_t enin_j, uint8_t *rpik, uint8_t *rpi)
     padding[12] = (enin_j & 0xFF000000) >> 24;
 #endif
 
-	(void)tc_aes128_set_encrypt_key(&s, rpik);
-	(void)tc_aes_encrypt(rpi, padding, &s);
+    (void) tc_aes128_set_encrypt_key(&s, rpik);
+    (void) tc_aes_encrypt(rpi, padding, &s);
 
     return 0;
 }

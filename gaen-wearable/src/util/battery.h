@@ -43,10 +43,10 @@
  * monotonic decreasing within the sequence.
  */
 struct battery_level_point {
-	/** Remaining life at #lvl_mV. */
-	uint16_t lvl_pptt;
-	/** Battery voltage at #lvl_pptt remaining life. */
-	uint16_t lvl_mV;
+    /** Remaining life at #lvl_mV. */
+    uint16_t lvl_pptt;
+    /** Battery voltage at #lvl_pptt remaining life. */
+    uint16_t lvl_mV;
 };
 
 /**
@@ -78,6 +78,6 @@ int battery_sample(void);
  * @return pptt of milliVolt sample.
  */
 unsigned int battery_level_pptt(unsigned int batt_mV,
-				const struct battery_level_point *curve);
+                const struct battery_level_point *curve);
 
 #endif /* __BATTERY_H_ */

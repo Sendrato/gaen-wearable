@@ -118,11 +118,11 @@ void ct_app_event(ct_app_id_t app, ct_event_t event)
 
 void main(void)
 {
-	int err = bt_enable(NULL);
-	if (err) {
-		LOG_ERR("Bluetooth init failed (err %d)\n", err);
-		return;
-	}
+    int err = bt_enable(NULL);
+    if (err) {
+        LOG_ERR("Bluetooth init failed (err %d)\n", err);
+        return;
+    }
 
     if (IS_ENABLED(CONFIG_SETTINGS)) {
         settings_load();

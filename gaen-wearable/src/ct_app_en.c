@@ -61,16 +61,16 @@ static void app_en_state_scan(struct k_work *work);
 /************* BT PARAMS ***************/
 
 static uint8_t _en_bt_service_data[22] = { 0x6f,0xfd,
-				'T', 'E', 'S', 'T',
-				'T', 'E', 'S', 'T',
-				'T', 'E', 'S', 'T',
-				'T', 'E', 'S', 'T',
+                'T', 'E', 'S', 'T',
+                'T', 'E', 'S', 'T',
+                'T', 'E', 'S', 'T',
+                'T', 'E', 'S', 'T',
                 'A', 'E', 'M', 'D' };
 
 static struct bt_data _en_bt_ad[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, 0x1A),
-	BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0x6F,0xFD ),
-	BT_DATA(BT_DATA_SVC_DATA16, _en_bt_service_data, sizeof(_en_bt_service_data))
+    BT_DATA_BYTES(BT_DATA_FLAGS, 0x1A),
+    BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0x6F,0xFD ),
+    BT_DATA(BT_DATA_SVC_DATA16, _en_bt_service_data, sizeof(_en_bt_service_data))
 };
 
 static struct bt_le_adv_param  _en_bt_adv_param;
@@ -168,33 +168,33 @@ static void en_bt_scan_cb(const bt_addr_le_t *addr, int8_t rssi,
     int ret;
     char rpi_str[80];
 
-	if (adv_type != BT_GAP_ADV_TYPE_ADV_NONCONN_IND) {
-		return;
-	}
+    if (adv_type != BT_GAP_ADV_TYPE_ADV_NONCONN_IND) {
+        return;
+    }
 
-	while (ad->len > 1) {
-		uint8_t len = net_buf_simple_pull_u8(ad);
-		uint8_t type;
+    while (ad->len > 1) {
+        uint8_t len = net_buf_simple_pull_u8(ad);
+        uint8_t type;
 
-		// Check for early termination
-		if (len == 0U) {
-			LOG_DBG("AD len = 0");
+        // Check for early termination
+        if (len == 0U) {
+            LOG_DBG("AD len = 0");
             return;
-		}
+        }
 
-		if (len > ad->len) {
-			LOG_DBG("AD malformed");
-			return;
-		}
+        if (len > ad->len) {
+            LOG_DBG("AD malformed");
+            return;
+        }
 
-		type = net_buf_simple_pull_u8(ad);
+        type = net_buf_simple_pull_u8(ad);
 
-		if (type == BT_DATA_UUID16_ALL) {
-			if(ad->data[0] == 0x6F && ad->data[1] == 0xfd) {
+        if (type == BT_DATA_UUID16_ALL) {
+            if(ad->data[0] == 0x6F && ad->data[1] == 0xfd) {
                 LOG_INF("\tCT Service");
             }
-		} else if (type == BT_DATA_SVC_DATA16) {
-			if(ad->data[0] == 0x6F && ad->data[1] == 0xfd) {
+        } else if (type == BT_DATA_SVC_DATA16) {
+            if(ad->data[0] == 0x6F && ad->data[1] == 0xfd) {
 
                 char le_addr[BT_ADDR_LE_STR_LEN];
                 bt_addr_le_to_str(addr, le_addr, sizeof(le_addr));
@@ -213,12 +213,11 @@ static void en_bt_scan_cb(const bt_addr_le_t *addr, int8_t rssi,
                 if (ret == ENOMEM) {
                     ct_app_event(CT_APP_EN, CT_EVENT_ENOMEM);
                 }
-
             }
-		}
+        }
 
         net_buf_simple_pull(ad, len - 1);
-	}
+    }
 }
 
 /************* EN_APP STATES ***************/
@@ -366,9 +365,9 @@ static void app_en_state_scan(struct k_work *work)
 int ct_app_en_init(void)
 {
     bt_addr_le_t addrs[CONFIG_BT_ID_MAX];
-	size_t count = CONFIG_BT_ID_MAX;
+    size_t count = CONFIG_BT_ID_MAX;
 
-	bt_id_get(addrs, &count);
+    bt_id_get(addrs, &count);
 
     if(count<2) {
         _en_bt_adv_param.id = bt_id_create(NULL, NULL);

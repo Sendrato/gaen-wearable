@@ -177,16 +177,16 @@ static uint32_t _db_flash_sector_offset = 0;
 int ct_db_flash_init(void)
 {
     LOG_INF(CT_FLASH_LABEL " SPI flash");
-	LOG_INF("==========================");
+    LOG_INF("==========================");
     LOG_INF("Bus: " CT_FLASH_SPI_BUS );
     LOG_INF("Dev: " CT_FLASH_DEVICE );
 
-	_db_flash_dev = device_get_binding(CT_FLASH_DEVICE);
+    _db_flash_dev = device_get_binding(CT_FLASH_DEVICE);
 
-	if (!_db_flash_dev) {
-		LOG_ERR("Flash driver %s was not found!\n", CT_FLASH_DEVICE);
-		return -ENODEV;
-	}
+    if (!_db_flash_dev) {
+        LOG_ERR("Flash driver %s was not found!\n", CT_FLASH_DEVICE);
+        return -ENODEV;
+    }
 
     return 0;
 }
@@ -225,9 +225,9 @@ int ct_db_flash_load(void) {
         addr = sector*CT_FLASH_SECTOR_SIZE;
         err  = flash_read(_db_flash_dev, addr, (uint8_t*)&ival, sizeof(ival));
         if (err != 0) {
-    		LOG_ERR("Flash read failed! %d [IVAL]\n", err);
-    		return err;
-    	}
+            LOG_ERR("Flash read failed! %d [IVAL]\n", err);
+            return err;
+        }
         //printk("Flash: ival %d @ 0x%08x\n", ival, addr);
 
         // We need to find the sector with the highest ival.
@@ -279,9 +279,9 @@ int ct_db_flash_load(void) {
             db_tek_t tek;
             err  = flash_read(_db_flash_dev, addr, (uint8_t*)&tek, sizeof(tek));
             if (err != 0) {
-        		LOG_ERR("Flash read failed! %d [TEK]\n", err);
-        		return err;
-        	}
+                LOG_ERR("Flash read failed! %d [TEK]\n", err);
+                return err;
+            }
 
             // TEK not yet added? ==> add TEK!
             // > shift "prev" because we add from new...old!
@@ -307,9 +307,9 @@ int ct_db_flash_load(void) {
             err  = flash_read(_db_flash_dev, addr, (uint8_t*) &ival, sizeof(ival));
 #endif
             if (err != 0) {
-        		LOG_ERR("Flash read failed! %d [RPI]\n", err);
-        		return err;
-        	}
+                LOG_ERR("Flash read failed! %d [RPI]\n", err);
+                return err;
+            }
 
 #if defined(CT_FLASH_LOAD_RPI_FULL) && (CT_FLASH_LOAD_RPI_FULL==1)
             ival = rpi.ival_first;

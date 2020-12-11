@@ -36,8 +36,8 @@
 
 
 int hmac_sha256(uint8_t *out, unsigned int out_len,
-				const void *key, size_t key_len,
-				const uint8_t *data, size_t data_len);
+                const void *key, size_t key_len,
+                const uint8_t *data, size_t data_len);
 
 /*
  *  FUNCTION
@@ -67,8 +67,8 @@ int hmac_sha256(uint8_t *out, unsigned int out_len,
  *      0 - Failure
  */
 int hkdf_sha256(uint8_t *out_key, size_t out_len,
-		const uint8_t *secret, size_t secret_len,
-		const uint8_t *salt, size_t salt_len,
-		const uint8_t *info, size_t info_len);
+                const uint8_t *secret, size_t secret_len,
+                const uint8_t *salt, size_t salt_len,
+                const uint8_t *info, size_t info_len);
 
 #endif  /* HKDF_H */

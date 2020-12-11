@@ -176,37 +176,37 @@ static int enc_bt_conn_new(enc_conn_t** enc_conn)
 static volatile bool _enc_bt_notify_enabled = false;
 
 static ssize_t enc_bt_cmd_on_receive(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  const void *buf,
-			  uint16_t len,
-			  uint16_t offset,
-			  uint8_t flags);
+                const struct bt_gatt_attr *attr,
+                const void *buf,
+                uint16_t len,
+                uint16_t offset,
+                uint8_t flags);
 
 static ssize_t enc_bt_rpi_on_read(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  void *buf,
-			  uint16_t len,
-			  uint16_t offset);
+                const struct bt_gatt_attr *attr,
+                void *buf,
+                uint16_t len,
+                uint16_t offset);
 
 static ssize_t enc_bt_tek_on_read(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  void *buf,
-			  uint16_t len,
-			  uint16_t offset);
+                const struct bt_gatt_attr *attr,
+                void *buf,
+                uint16_t len,
+                uint16_t offset);
 
 static void enc_bt_resp_ccc_cfg_changed(const struct bt_gatt_attr *attr,
-               uint16_t value);
+                uint16_t value);
 
 #define ENC_BT_UUID_SERVICE_PRIMARY \
-	BT_UUID_128_ENCODE(0xb3c04e98, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
+    BT_UUID_128_ENCODE(0xb3c04e98, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
 #define ENC_BT_UUID_CMD_CHAR \
-	BT_UUID_128_ENCODE(0xb3c04e99, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
+    BT_UUID_128_ENCODE(0xb3c04e99, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
 #define ENC_BT_UUID_RESP_CHAR \
-	BT_UUID_128_ENCODE(0xb3c04e9a, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
+    BT_UUID_128_ENCODE(0xb3c04e9a, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
 #define ENC_BT_UUID_READ_RPI_CHAR \
-	BT_UUID_128_ENCODE(0xb3c04e9b, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
+    BT_UUID_128_ENCODE(0xb3c04e9b, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
 #define ENC_BT_UUID_READ_TEK_CHAR \
-	BT_UUID_128_ENCODE(0xb3c04e9c, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
+    BT_UUID_128_ENCODE(0xb3c04e9c, 0x82b5, 0x4587, 0x84b6, 0x6179a66a079f)
 
 
 #define ENC_BT_UUID_SERVICE    BT_UUID_DECLARE_128(ENC_BT_UUID_SERVICE_PRIMARY)
@@ -216,8 +216,8 @@ static void enc_bt_resp_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 #define ENC_BT_UUID_READ_TEK   BT_UUID_DECLARE_128(ENC_BT_UUID_READ_TEK_CHAR)
 
 static const struct bt_data _enc_bt_ad[] = {
-	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-	BT_DATA_BYTES(BT_DATA_UUID128_ALL, ENC_BT_UUID_SERVICE_PRIMARY),
+    BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
+    BT_DATA_BYTES(BT_DATA_UUID128_ALL, ENC_BT_UUID_SERVICE_PRIMARY),
 };
 
 static const struct bt_data _enc_bt_sd[] = {
@@ -225,44 +225,44 @@ static const struct bt_data _enc_bt_sd[] = {
         0x0a, 0x18,   // Device Information Service
         0x0f, 0x18,   // Battery Service
         0x05, 0x18),  // Current Time Service
-	BT_DATA(BT_DATA_NAME_COMPLETE, ct_priv.device_name, sizeof(ct_priv.device_name)),
+    BT_DATA(BT_DATA_NAME_COMPLETE, ct_priv.device_name, sizeof(ct_priv.device_name)),
 };
 
 static struct bt_gatt_attr _enc_bt_service_attrs[] = {
-	BT_GATT_PRIMARY_SERVICE(ENC_BT_UUID_SERVICE),
-	BT_GATT_CHARACTERISTIC(ENC_BT_UUID_CMD,
-		BT_GATT_CHRC_WRITE,
-		BT_GATT_PERM_WRITE_AUTHEN,
-		NULL, enc_bt_cmd_on_receive, NULL),
-	BT_GATT_CHARACTERISTIC(ENC_BT_UUID_RESP,
+    BT_GATT_PRIMARY_SERVICE(ENC_BT_UUID_SERVICE),
+    BT_GATT_CHARACTERISTIC(ENC_BT_UUID_CMD,
+        BT_GATT_CHRC_WRITE,
+        BT_GATT_PERM_WRITE_AUTHEN,
+        NULL, enc_bt_cmd_on_receive, NULL),
+    BT_GATT_CHARACTERISTIC(ENC_BT_UUID_RESP,
         BT_GATT_CHRC_NOTIFY,
-		BT_GATT_PERM_NONE,
+        BT_GATT_PERM_NONE,
         NULL, NULL, NULL),
     BT_GATT_CCC(enc_bt_resp_ccc_cfg_changed,
         BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
     BT_GATT_CHARACTERISTIC(ENC_BT_UUID_READ_RPI,
         BT_GATT_CHRC_READ,
-		BT_GATT_PERM_READ_AUTHEN,
+        BT_GATT_PERM_READ_AUTHEN,
         enc_bt_rpi_on_read, NULL, NULL),
     BT_GATT_CHARACTERISTIC(ENC_BT_UUID_READ_TEK,
         BT_GATT_CHRC_READ,
-		BT_GATT_PERM_READ_AUTHEN,
+        BT_GATT_PERM_READ_AUTHEN,
         enc_bt_tek_on_read, NULL, NULL)
 };
 
 static struct bt_gatt_service _enc_bt_service =
-		    BT_GATT_SERVICE(_enc_bt_service_attrs);
+                BT_GATT_SERVICE(_enc_bt_service_attrs);
 
 /************* BT NOTIFICATION ***************/
 
 static void enc_bt_resp_ccc_cfg_changed(const struct bt_gatt_attr *attr,
                 uint16_t value)
 {
-	ARG_UNUSED(attr);
+    ARG_UNUSED(attr);
 
-	_enc_bt_notify_enabled = (value == BT_GATT_CCC_NOTIFY);
+    _enc_bt_notify_enabled = (value == BT_GATT_CCC_NOTIFY);
 
-	LOG_INF("ENC APP Notifications %s",
+    LOG_INF("ENC APP Notifications %s",
         _enc_bt_notify_enabled ? log_strdup("enabled") : log_strdup("disabled"));
 }
 
@@ -277,8 +277,8 @@ static void enc_app_notify(struct bt_conn *conn, uint8_t mask,
     enc_conn_t* enc_conn;
     if (enc_bt_conn_get(conn, &enc_conn) != 0) {
         LOG_ERR("Unknown connection");
-		return;
-	}
+        return;
+    }
 
     uint8_t cmd_idx   = 0;
 
@@ -405,24 +405,24 @@ static void enc_app_notify(struct bt_conn *conn, uint8_t mask,
 /************* BT READ RPI AND TEK  ***************/
 
 static ssize_t enc_bt_rpi_on_read(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  void *b,
-			  uint16_t buf_len,
-			  uint16_t offset)
+                const struct bt_gatt_attr *attr,
+                void *b,
+                uint16_t buf_len,
+                uint16_t offset)
 {
-	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle, conn );
+    LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle, conn );
     uint8_t *buf = (uint8_t*)b;
 
     // Does connection exists? approved by user
     enc_conn_t* enc_conn;
     if (enc_bt_conn_get(conn, &enc_conn) != 0) {
         LOG_ERR("Unknown connection");
-		return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
-	}
+        return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
+    }
 
-	if (0) { // not approved by user
-		return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
-	}
+    if (0) { // not approved by user
+        return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
+    }
 
     // We need to creat a byte-stream of consequtive RPIs.
     //  As we cannot push all data at once, we need to recompute on each request
@@ -443,9 +443,9 @@ static ssize_t enc_bt_rpi_on_read(struct bt_conn *conn,
     LOG_DBG(">> cnt:%d, val_len:%d\n", cnt, value_len );
 
     // 3) Check if request/offset is valid,.
-	if (offset > value_len) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
-	}
+    if (offset > value_len) {
+        return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+    }
 
     // max read-limit in BLE = 512 bytes
     const uint16_t limit     = 512;
@@ -523,30 +523,30 @@ static ssize_t enc_bt_rpi_on_read(struct bt_conn *conn,
                     value_len, i, read_len, enc_conn->idx_rpi);
 
     // return amount of data which has been pushed to the provided buffer.
-	return read_len;
+    return read_len;
 }
 
 
 
 static ssize_t enc_bt_tek_on_read(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  void *b,
-			  uint16_t buf_len,
-			  uint16_t offset)
+                const struct bt_gatt_attr *attr,
+                void *b,
+                uint16_t buf_len,
+                uint16_t offset)
 {
-	LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle, conn);
+    LOG_DBG("Attribute read, handle: %u, conn: %p", attr->handle, conn);
     uint8_t *buf = (uint8_t*)b;
 
     // Does connection exists? approved by user
     enc_conn_t* enc_conn;
     if (enc_bt_conn_get(conn, &enc_conn) != 0) {
         LOG_ERR("Unknown connection");
-		return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
-	}
+        return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
+    }
 
-	if (0) { // not approved by user
-		return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
-	}
+    if (0) { // not approved by user
+        return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
+    }
 
     // We need to creat a byte-stream of consequtive TEKs + RollingInterval
     //  As we cannot push all data at once, we need to recompute on each request
@@ -567,9 +567,9 @@ static ssize_t enc_bt_tek_on_read(struct bt_conn *conn,
     LOG_DBG(">> cnt:%d, val_len:%d", cnt, value_len );
 
     // 3) Check if request/offset is valid,.
-	if (offset > value_len) {
-		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
-	}
+    if (offset > value_len) {
+        return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+    }
 
     // max read-limit in BLE = 512 bytes
     const uint16_t limit     = 512;
@@ -639,27 +639,27 @@ static ssize_t enc_bt_tek_on_read(struct bt_conn *conn,
     LOG_DBG("TEK [off:%d buf:%d db:%d][read:%d==%d][%d]\n", offset, buf_len,
                     value_len, i, read_len, enc_conn->idx_tek);
 
-	return read_len;
+    return read_len;
 }
 
 /************* BT CMD HANDLING  ***************/
 
 
 static ssize_t enc_bt_cmd_on_receive(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr,
-			  const void *buf,
-			  uint16_t len,
-			  uint16_t offset,
-			  uint8_t flags)
+                const struct bt_gatt_attr *attr,
+                const void *buf,
+                uint16_t len,
+                uint16_t offset,
+                uint8_t flags)
 {
-	LOG_DBG("Received cmd data, handle %d, conn %p", attr->handle, conn);
+    LOG_DBG("Received cmd data, handle %d, conn %p", attr->handle, conn);
 
     // Does connection exists? approved by user
     enc_conn_t* enc_conn;
     if (enc_bt_conn_get(conn, &enc_conn) != 0) {
         LOG_ERR("Unknown connection");
-		return len;
-	}
+        return len;
+    }
 
     if(len < 1) {
         LOG_ERR("ENC_APP: Empty command received");
@@ -852,17 +852,17 @@ static ssize_t enc_bt_cmd_on_receive(struct bt_conn *conn,
             break;
     }
 
-	return len;
+    return len;
 }
 
 /************* BT SERVICES AND SETUP  ***************/
 
 static void connected(struct bt_conn *conn, uint8_t err)
 {
-	if (err) {
-		LOG_ERR("enc_app connection failed (err %u)", err);
-	} else {
-		LOG_INF("enc_app connected");
+    if (err) {
+        LOG_ERR("enc_app connection failed (err %u)", err);
+    } else {
+        LOG_INF("enc_app connected");
 
         enc_conn_t* enc_conn;
         if (enc_bt_conn_new(&enc_conn) != 0) {
@@ -883,12 +883,12 @@ static void connected(struct bt_conn *conn, uint8_t err)
         if (bt_conn_set_security(conn, BT_SECURITY_L4 | BT_SECURITY_FORCE_PAIR)) {
             LOG_ERR("Failed to set security\n");
         }
-	}
+    }
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	LOG_DBG("Disconnected (reason %u)", reason);
+    LOG_DBG("Disconnected (reason %u)", reason);
 
     enc_conn_t* enc_conn;
     if (enc_bt_conn_get(conn, &enc_conn) == 0) {
@@ -906,75 +906,68 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 
-static void identity_resolved(struct bt_conn *conn, const bt_addr_le_t *rpa,
-			      const bt_addr_le_t *identity)
+static void identity_resolved(struct bt_conn *conn,
+                const bt_addr_le_t *rpa,
+                const bt_addr_le_t *identity)
 {
-	char addr_identity[BT_ADDR_LE_STR_LEN];
-	char addr_rpa[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(identity, addr_identity, sizeof(addr_identity));
-	bt_addr_le_to_str(rpa, addr_rpa, sizeof(addr_rpa));
-
-	LOG_INF("Identity resolved %s -> %s\n",
-                    log_strdup(addr_rpa), log_strdup(addr_identity));
+    char addr_identity[BT_ADDR_LE_STR_LEN];
+    char addr_rpa[BT_ADDR_LE_STR_LEN];
+    bt_addr_le_to_str(identity, addr_identity, sizeof(addr_identity));
+    bt_addr_le_to_str(rpa, addr_rpa, sizeof(addr_rpa));
+    LOG_INF("Identity resolved %s -> %s\n",
+                log_strdup(addr_rpa), log_strdup(addr_identity));
 }
 
-static void security_changed(struct bt_conn *conn, bt_security_t level,
-			     enum bt_security_err err)
+static void security_changed(struct bt_conn *conn,
+                bt_security_t level,
+                enum bt_security_err err)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	LOG_INF("Security changed: %s level %u", log_strdup(addr), level);
+    char addr[BT_ADDR_LE_STR_LEN];
+    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+    LOG_INF("Security changed: %s level %u", log_strdup(addr), level);
 }
 
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	LOG_INF("Passkey for %s: %06u", log_strdup(addr), passkey);
+    char addr[BT_ADDR_LE_STR_LEN];
+    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+    LOG_INF("Passkey for %s: %06u", log_strdup(addr), passkey);
 }
 
 static void auth_cancel(struct bt_conn *conn)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	LOG_INF("Pairing cancelled: %s", log_strdup(addr));
+    char addr[BT_ADDR_LE_STR_LEN];
+    bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+    LOG_INF("Pairing cancelled: %s", log_strdup(addr));
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
-	LOG_INF("Pairing Complete\n");
+    LOG_INF("Pairing Complete\n");
 }
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-	LOG_ERR("Pairing Failed (%d). Disconnecting.\n", reason);
-	bt_conn_disconnect(conn, BT_HCI_ERR_AUTH_FAIL);
-
+    LOG_ERR("Pairing Failed (%d). Disconnecting.\n", reason);
+    bt_conn_disconnect(conn, BT_HCI_ERR_AUTH_FAIL);
     APP_STATE_EXTEND(&_enc_state_work,K_SECONDS(30));
 }
 
 static struct bt_conn_auth_cb auth_cb_display = {
-	.passkey_display = auth_passkey_display,
-	.passkey_entry = NULL,
-	.cancel = auth_cancel,
-	.pairing_complete = pairing_complete,
-	.pairing_failed = pairing_failed,
+    .passkey_display = auth_passkey_display,
+    .passkey_entry = NULL,
+    .cancel = auth_cancel,
+    .pairing_complete = pairing_complete,
+    .pairing_failed = pairing_failed,
 };
 
 
 static struct bt_conn_cb _conn_callbacks = {
-	.connected = connected,
-	.disconnected = disconnected,
+    .connected = connected,
+    .disconnected = disconnected,
 #if defined(CONFIG_BT_SMP)
-	.identity_resolved = identity_resolved,
-	.security_changed = security_changed,
+    .identity_resolved = identity_resolved,
+    .security_changed = security_changed,
 #endif
 };
 
@@ -1006,12 +999,12 @@ static void app_enc_state_start(struct k_work *work)
     bt_gatt_disa_start();
     bt_gatt_basa_start();
 
-	int err = bt_le_adv_start(BT_LE_ADV_CONN,
-                        _enc_bt_ad, ARRAY_SIZE(_enc_bt_ad),
-                        _enc_bt_sd, ARRAY_SIZE(_enc_bt_sd));
-	if (err) {
-		LOG_ERR("Advertising failed to start for config (err %d)", err);
-	}
+    int err = bt_le_adv_start(BT_LE_ADV_CONN,
+                _enc_bt_ad, ARRAY_SIZE(_enc_bt_ad),
+                _enc_bt_sd, ARRAY_SIZE(_enc_bt_sd));
+    if (err) {
+        LOG_ERR("Advertising failed to start for config (err %d)", err);
+    }
 
     ct_app_event(CT_APP_ENC, CT_EVENT_START);
 

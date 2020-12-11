@@ -37,23 +37,23 @@ LOG_MODULE_REGISTER(bt_bas, LOG_LEVEL_INF);
 static uint8_t _battery_level = 100U;
 
 static void blvl_ccc_cfg_changed(const struct bt_gatt_attr *attr,
-				       uint16_t value)
+                uint16_t value)
 {
-	ARG_UNUSED(attr);
+    ARG_UNUSED(attr);
 
-	bool notif_enabled = (value == BT_GATT_CCC_NOTIFY);
+    bool notif_enabled = (value == BT_GATT_CCC_NOTIFY);
 
-	LOG_INF("BAS Notifications %s", notif_enabled ? "enabled" : "disabled");
+    LOG_INF("BAS Notifications %s", notif_enabled ? "enabled" : "disabled");
 }
 
 static ssize_t read_blvl(struct bt_conn *conn,
-			       const struct bt_gatt_attr *attr, void *buf,
-			       uint16_t len, uint16_t offset)
+                const struct bt_gatt_attr *attr, void *buf,
+                uint16_t len, uint16_t offset)
 {
-	uint8_t lvl8 = _battery_level;
+    uint8_t lvl8 = _battery_level;
 
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, &lvl8,
-				    sizeof(lvl8));
+    return bt_gatt_attr_read(conn, attr, buf, len, offset,
+                &lvl8, sizeof(lvl8));
 }
 
 #if defined(CONFIG_BT_SMP_SC_ONLY) && (CONFIG_BT_SMP_SC_ONLY==y)
@@ -65,37 +65,37 @@ static ssize_t read_blvl(struct bt_conn *conn,
 #endif
 
 static struct bt_gatt_attr _basa_service_attrs[] = {
-	BT_GATT_PRIMARY_SERVICE(BT_UUID_BAS),
-	BT_GATT_CHARACTERISTIC(BT_UUID_BAS_BATTERY_LEVEL,
-			       BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
-			       BT_GATT_PERM_READ_LEVEL, read_blvl, NULL,
-			       &_battery_level),
-	BT_GATT_CCC(blvl_ccc_cfg_changed,
-		    BT_GATT_PERM_READ_LEVEL | BT_GATT_PERM_WRITE_LEVEL),
+    BT_GATT_PRIMARY_SERVICE(BT_UUID_BAS),
+    BT_GATT_CHARACTERISTIC(BT_UUID_BAS_BATTERY_LEVEL,
+                BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+                BT_GATT_PERM_READ_LEVEL, read_blvl, NULL,
+                &_battery_level),
+    BT_GATT_CCC(blvl_ccc_cfg_changed,
+                BT_GATT_PERM_READ_LEVEL | BT_GATT_PERM_WRITE_LEVEL),
 };
 
 static struct bt_gatt_service _basa_service =
-		    BT_GATT_SERVICE(_basa_service_attrs);
+                BT_GATT_SERVICE(_basa_service_attrs);
 
 
 uint8_t bt_gatt_basa_get_battery_level(void)
 {
-	return _battery_level;
+    return _battery_level;
 }
 
 int bt_gatt_basa_set_battery_level(uint8_t level)
 {
-	int rc;
+    int rc;
 
-	if (level > 100U) {
-		return -EINVAL;
-	}
+    if (level > 100U) {
+        return -EINVAL;
+    }
 
-	_battery_level = level;
+    _battery_level = level;
 
-	rc = bt_gatt_notify(NULL, &_basa_service.attrs[1], &level, sizeof(level));
+    rc = bt_gatt_notify(NULL, &_basa_service.attrs[1], &level, sizeof(level));
 
-	return rc == -ENOTCONN ? 0 : rc;
+    return rc == -ENOTCONN ? 0 : rc;
 }
 
 int bt_gatt_basa_init(void)

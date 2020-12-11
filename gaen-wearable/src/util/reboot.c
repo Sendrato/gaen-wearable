@@ -39,16 +39,15 @@ LOG_MODULE_REGISTER(err_reboot, LOG_LEVEL_ERR);
 
 extern void sys_arch_reboot(int type);
 
-void k_sys_fatal_error_handler(unsigned int reason,
-			       const z_arch_esf_t *esf)
+void k_sys_fatal_error_handler(unsigned int reason, const z_arch_esf_t *esf)
 {
-	ARG_UNUSED(esf);
-	ARG_UNUSED(reason);
+    ARG_UNUSED(esf);
+    ARG_UNUSED(reason);
 
-	LOG_PANIC();
+    LOG_PANIC();
 
-	LOG_ERR("Resetting system");
-	sys_reboot(0);
+    LOG_ERR("Resetting system");
+    sys_reboot(0);
 
-	CODE_UNREACHABLE;
+    CODE_UNREACHABLE;
 }

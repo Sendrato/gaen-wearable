@@ -52,20 +52,20 @@ LOG_MODULE_REGISTER(battery, LOG_LEVEL_INF);
  */
 const struct battery_level_point lipo[] = {
 
-	/* "Curve" here eyeballed from captured data for a full load
-	 * that started with a charge of 3.96 V and dropped about
-	 * linearly to 3.58 V over 15 hours.  It then dropped rapidly
-	 * to 3.10 V over one hour, at which point it stopped
-	 * transmitting.
-	 *
-	 * Based on eyeball comparisons we'll say that 15/16 of life
-	 * goes between 3.95 and 3.55 V, and 1/16 goes between 3.55 V
-	 * and 3.1 V.
-	 */
+    /* "Curve" here eyeballed from captured data for a full load
+     * that started with a charge of 3.96 V and dropped about
+     * linearly to 3.58 V over 15 hours.  It then dropped rapidly
+     * to 3.10 V over one hour, at which point it stopped
+     * transmitting.
+     *
+     * Based on eyeball comparisons we'll say that 15/16 of life
+     * goes between 3.95 and 3.55 V, and 1/16 goes between 3.55 V
+     * and 3.1 V.
+     */
 
-	{ 10000, 3950 },
-	{ 625, 3550 },
-	{ 0, 3100 },
+    { 10000, 3950 },
+    { 625, 3550 },
+    { 0, 3100 },
 };
 
 
@@ -75,10 +75,10 @@ const struct battery_level_point cr2032[] = {
 
     /* to be done, user enegizer datasheet as estimate ... */
 
-	{ 10000, 2950 },
+    { 10000, 2950 },
     { 4500, 2900 },
-	{ 1500, 2550 },
-	{ 0, 1800 },
+    { 1500, 2550 },
+    { 0, 1800 },
 };
 
 
@@ -88,36 +88,36 @@ const static struct device *_adc_dev;
 static struct adc_channel_cfg _adc_cfg;
 static struct adc_sequence _adc_seq;
 
-static 	int16_t _adc_raw;
+static int16_t _adc_raw;
 
 int battery_init(void)
 {
-	int rc;
+    int rc;
 
-	_adc_dev = device_get_binding(BATT_NODE_LABEL);
-	if (_adc_dev == NULL) {
-		LOG_ERR("Failed to get ADC:  " BATT_NODE_LABEL);
-		return -ENOENT;
-	}
+    _adc_dev = device_get_binding(BATT_NODE_LABEL);
+    if (_adc_dev == NULL) {
+        LOG_ERR("Failed to get ADC:  " BATT_NODE_LABEL);
+        return -ENOENT;
+    }
 
 
-	_adc_seq = (struct adc_sequence){
-		.channels = BIT(0),
-		.buffer = &_adc_raw,
-		.buffer_size = sizeof(_adc_raw),
-		.oversampling = 4,
-		.calibrate = true,
-	};
+    _adc_seq = (struct adc_sequence){
+        .channels = BIT(0),
+        .buffer = &_adc_raw,
+        .buffer_size = sizeof(_adc_raw),
+        .oversampling = 4,
+        .calibrate = true,
+    };
 
 #ifdef CONFIG_ADC_NRFX_SAADC
-	_adc_cfg = (struct adc_channel_cfg){
-		.gain = ADC_GAIN_1_6,
-		.reference = ADC_REF_INTERNAL,
-		.acquisition_time = ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40),
-		.input_positive = NRF_SAADC_INPUT_VDD,
-	};
+    _adc_cfg = (struct adc_channel_cfg){
+        .gain = ADC_GAIN_1_6,
+        .reference = ADC_REF_INTERNAL,
+        .acquisition_time = ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40),
+        .input_positive = NRF_SAADC_INPUT_VDD,
+    };
 
-	_adc_seq.resolution = 14;
+    _adc_seq.resolution = 14;
 #else /* CONFIG_ADC_var */
 #warning Unsupported ADC
     _adc_dev = NULL;
@@ -128,22 +128,22 @@ int battery_init(void)
         return -ENOENT;
     }
 
-	rc = adc_channel_setup(_adc_dev, &_adc_cfg);
-	if(rc)
+    rc = adc_channel_setup(_adc_dev, &_adc_cfg);
+    if(rc)
         LOG_ERR("Setup AIN_VDD got %d", rc);
 
     battery_sample();
 
-	return rc;
+    return rc;
 }
 
 int battery_sample(void)
 {
-	int rc;
+    int rc;
 
     if (_adc_dev == NULL) {
-		return -ENOENT;
-	}
+        return -ENOENT;
+    }
 
     rc = adc_read(_adc_dev, &_adc_seq);
     _adc_seq.calibrate = false;
@@ -160,34 +160,34 @@ int battery_sample(void)
         /* resistor correction to be added for externally measured voltages */
     }
 
-	return rc;
+    return rc;
 }
 
 /* battery level in pptt (parts per 10.000) */
 unsigned int battery_level_pptt(unsigned int batt_mV,
-				const struct battery_level_point *curve)
+                const struct battery_level_point *curve)
 {
-	const struct battery_level_point *pb = curve;
+    const struct battery_level_point *pb = curve;
 
-	if (batt_mV >= pb->lvl_mV) {
-		/* Measured voltage above highest point, cap at maximum. */
-		return pb->lvl_pptt;
-	}
-	/* Go down to the last point at or below the measured voltage. */
-	while ((pb->lvl_pptt > 0)
-	       && (batt_mV < pb->lvl_mV)) {
-		++pb;
-	}
-	if (batt_mV < pb->lvl_mV) {
-		/* Below lowest point, cap at minimum */
-		return pb->lvl_pptt;
-	}
+    if (batt_mV >= pb->lvl_mV) {
+        /* Measured voltage above highest point, cap at maximum. */
+        return pb->lvl_pptt;
+    }
+    /* Go down to the last point at or below the measured voltage. */
+    while ((pb->lvl_pptt > 0)
+           && (batt_mV < pb->lvl_mV)) {
+        ++pb;
+    }
+    if (batt_mV < pb->lvl_mV) {
+        /* Below lowest point, cap at minimum */
+        return pb->lvl_pptt;
+    }
 
-	/* Linear interpolation between below and above points. */
-	const struct battery_level_point *pa = pb - 1;
+    /* Linear interpolation between below and above points. */
+    const struct battery_level_point *pa = pb - 1;
 
-	return pb->lvl_pptt
-	       + ((pa->lvl_pptt - pb->lvl_pptt)
-		  * (batt_mV - pb->lvl_mV)
-		  / (pa->lvl_mV - pb->lvl_mV));
+    return pb->lvl_pptt
+           + ((pa->lvl_pptt - pb->lvl_pptt)
+          * (batt_mV - pb->lvl_mV)
+          / (pa->lvl_mV - pb->lvl_mV));
 }

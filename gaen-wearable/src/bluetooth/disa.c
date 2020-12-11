@@ -47,21 +47,19 @@ static uint8_t _disa_fw_rev[] = CT_INFO_FWREV;
 static uint8_t _disa_hw_rev[] = CONFIG_BOARD;
 static uint8_t _disa_serial[25];
 
-static ssize_t read_str(struct bt_conn *conn,
-			  const struct bt_gatt_attr *attr, void *buf,
-			  uint16_t len, uint16_t offset)
+static ssize_t read_str(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+                void *buf, uint16_t len, uint16_t offset)
 {
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, attr->user_data,
-				 strlen(attr->user_data));
+    return bt_gatt_attr_read(conn, attr, buf, len, offset,
+                    attr->user_data, strlen(attr->user_data));
 }
 
 #if PROVIDE_BT_GATT_DIS_PNP
-static ssize_t read_pnp_id(struct bt_conn *conn,
-			   const struct bt_gatt_attr *attr, void *buf,
-			   uint16_t len, uint16_t offset)
+static ssize_t read_pnp_id(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+                void *buf, uint16_t len, uint16_t offset)
 {
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, &disa_pnp_id,
-				 sizeof(disa_pnp_id));
+    return bt_gatt_attr_read(conn, attr, buf, len, offset,
+                    &disa_pnp_id, sizeof(disa_pnp_id));
 }
 #endif
 
@@ -100,7 +98,7 @@ static struct bt_gatt_attr _disa_service_attrs[] = {
 };
 
 static struct bt_gatt_service _disa_service =
-		    BT_GATT_SERVICE(_disa_service_attrs);
+                BT_GATT_SERVICE(_disa_service_attrs);
 
 int bt_gatt_disa_init(void)
 {
