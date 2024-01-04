@@ -1,7 +1,8 @@
 repo_name: Sendrato/gaen-wearable
 report_id: 5848214135f25f32f4872c7aff8fa554
+version: 0.1
 repo_type: Public
-timestamp: '2023-11-09T15:18:35+00:00'
+timestamp: '2024-01-04T14:59:07+00:00'
 requested_by: HesselM
 provider: github
 branch: main
@@ -15,6 +16,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/no-img-open-source.png
+  detection_source_url: https://github.com/Sendrato/gaen-wearable
   detection_source: Repo Metadata
 - name: CMake
   description: 'An open-source system that manages the build process '
@@ -24,6 +26,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Java Build Tools
   image_url: https://img.stackshare.io/service/2424/0UlUI_y1_400x400.jpg
+  detection_source_url: https://github.com/Sendrato/gaen-wearable
   detection_source: Repo Metadata
 - name: Git
   description: Fast, scalable, distributed revision control system
@@ -33,4 +36,5 @@ tools:
   category: Build, Test, Deploy
   sub_category: Version Control System
   image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/Sendrato/gaen-wearable
   detection_source: Repo Metadata
